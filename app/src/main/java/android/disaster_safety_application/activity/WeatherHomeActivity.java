@@ -42,7 +42,8 @@ public class WeatherHomeActivity extends AppCompatActivity {
                 new TabLayoutMediator.TabConfigurationStrategy() {
                     @Override
                     public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                        tab.setText(String.valueOf((position + 1)));
+                        String[] pages = {"北海道", "沖縄", "鹿児島"};
+                        tab.setText(pages[position]);
                     }
                 }).attach();
     }
