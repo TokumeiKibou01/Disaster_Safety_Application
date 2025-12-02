@@ -1,5 +1,6 @@
 package android.disaster_safety_application.fragment;
 
+import android.disaster_safety_application.api.OpenWeatherAPI;
 import android.disaster_safety_application.layout.WeatherDetailedAdapter;
 import android.disaster_safety_application.layout.WeatherFewDayAdapter;
 import android.disaster_safety_application.layout.WeatherFewHourAdapter;
@@ -7,14 +8,19 @@ import android.disaster_safety_application.layout.WeatherLayout;
 import android.disaster_safety_application.listener.WeatherPagerFragmentListener;
 import android.disaster_safety_application.status.AppColor;
 import android.disaster_safety_application.status.WeatherType;
+import android.location.Address;
+import android.location.Geocoder;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,13 +30,17 @@ import android.widget.TextView;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class WeatherPagerFragment extends Fragment {
 
     private String area;
+    private Address address;
     private View root_view;
 
     private final List<WeatherLayout> fewhour_Layout = new ArrayList<>();
@@ -65,6 +75,19 @@ public class WeatherPagerFragment extends Fragment {
         TextView test_text = root_view.findViewById(R.id.text);
         test_text.setText(area);
 
+        Geocoder geocoder = new Geocoder(getActivity());
+        if (!area.contains("現在位置")) {
+            try {
+                address = geocoder.getFromLocationName(area, 10).get(0);
+            } catch (IOException e) {}
+        }
+
+        if (address == null) {
+            address = new Address(Locale.JAPAN);
+            address.setLongitude(139.45f);
+            address.setLatitude(35.41f);
+        }
+
         //ボタングループ
         MaterialButtonToggleGroup buttonGroup = root_view.findViewById(R.id.weather_date_button_group);
         MaterialButton fewHour_button = buttonGroup.findViewById(R.id.fewhour_button);
@@ -88,31 +111,185 @@ public class WeatherPagerFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(root_view.getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         //初期設定
-        setFewhourLayout();
+        setFewhourLayout(3);
+    }
+
+    public Address getAddress() {
+        return address;
     }
 
     public List<WeatherLayout> getFewhourLayout() {
         return fewhour_Layout;
     }
 
-    public void setFewhourLayout() {
-        recyclerView.setAdapter(new WeatherFewHourAdapter(fewhour_Layout));
+    /**
+     * 数時間天気のレイアウトを設定する関数
+     * @param get_hour 何時間おきに取得するか
+     */
+    public void setFewhourLayout(int get_hour) {
+        List<WeatherLayout> fewHourList = new ArrayList<>();
+        for (int n = 0; n < 24; n+=get_hour) { //24時間先まで追加
+            WeatherLayout weatherLayout = new WeatherLayout(
+                    LocalDateTime.now(),
+                    WeatherType.UNKNOWN,
+                    0.0f,
+                    0.0f
+            );
+            fewHourList.add(weatherLayout);
+        }
+
+        new Thread(() -> { //ネットワークはメインスレッドできないので、別スレッドにする
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.systemDefault()); //現在時刻
+            OpenWeatherAPI openWeatherAPI = OpenWeatherAPI.getInstance(getActivity(), address.getLatitude(), address.getLongitude()); //APIから取得
+
+            int i = 0;
+            for (OpenWeatherAPI.WeatherList weatherList : openWeatherAPI.getWeatherList()) {
+                List<OpenWeatherAPI.WeatherList.Weather> weather = weatherList.getWeather();
+                OpenWeatherAPI.WeatherList.Weather first_weather = weather.get(0);
+                OpenWeatherAPI.WeatherList.Main main = weatherList.getMain();
+                LocalDateTime api_weather_time = weatherList.getLocalDateTime();
+                int diff_hour = Math.abs(api_weather_time.getHour() - localDateTime.getHour());
+                int sub_hour = Math.min(diff_hour, 24 - diff_hour);
+
+                if (sub_hour <= 1) {
+                    if (i >= 24 / get_hour) {
+                        break;
+                    }
+
+                    WeatherLayout weatherLayout = fewHourList.get(i);
+                    weatherLayout.setTime(api_weather_time);
+                    weatherLayout.setWeatherIconID(WeatherType.getConvertType(first_weather.getDescription()).getIconID());
+                    weatherLayout.setTempMax((float) main.getTempMax(false));
+                    weatherLayout.setTempMin((float) main.getTempMin(false));
+                    i++;
+                    localDateTime = localDateTime.plusHours(get_hour);
+                }
+            }
+
+
+            getActivity().runOnUiThread(() -> {
+                RecyclerView weatherView = root_view.findViewById(R.id.weather_recyclerView);
+                weatherView.removeAllViews();
+                weatherView.setAdapter(new WeatherFewHourAdapter(fewHourList));
+            });
+
+        }).start();
     }
 
     public List<WeatherLayout> getDetailedLayout() {
         return detailed_Layout;
     }
 
-    public void setDetailedLayout() {
-        recyclerView.setAdapter(new WeatherDetailedAdapter(detailed_Layout));
+    /**
+     * 詳細天気のレイアウトを設定する関数
+     * @param get_day 何日おきに取得するか
+     */
+    public void setDetailedLayout(int get_day) {
+        List<WeatherLayout> detailedList = new ArrayList<>();
+        for (int n = 0; n < 5; n+=get_day) {
+            WeatherLayout weatherLayout = new WeatherLayout(
+                    LocalDateTime.now(),
+                    WeatherType.UNKNOWN.getIconID(),
+                    "",
+                    0.0f,
+                    0.0f
+            );
+            detailedList.add(weatherLayout);
+        }
+
+        new Thread(() -> { //ネットワークはメインスレッドできないので、別スレッドにする
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.systemDefault()); //現在時刻
+            OpenWeatherAPI openWeatherAPI = OpenWeatherAPI.getInstance(getActivity(), address.getLatitude(), address.getLongitude()); //APIから取得
+
+            int i = 0;
+            for (OpenWeatherAPI.WeatherList weatherList : openWeatherAPI.getWeatherList()) {
+                if (i == 5) {
+                    break;
+                }
+
+                List<OpenWeatherAPI.WeatherList.Weather> weather = weatherList.getWeather();
+                OpenWeatherAPI.WeatherList.Weather first_weather = weather.get(0);
+                OpenWeatherAPI.WeatherList.Main main = weatherList.getMain();
+                LocalDateTime api_weather_time = weatherList.getLocalDateTime();
+
+                WeatherLayout weatherLayout = detailedList.get(i);
+
+                if (api_weather_time.getDayOfMonth() == localDateTime.getDayOfMonth()) {
+                    weatherLayout.setTime(api_weather_time);
+                    weatherLayout.setWeatherIconID(WeatherType.getConvertType(first_weather.getDescription()).getIconID());
+                    weatherLayout.setWeather(first_weather.getDescription());
+                    weatherLayout.setTempMax((float) main.getTempMax(false));
+                    weatherLayout.setTempMin((float) main.getTempMin(false));
+
+                    localDateTime = localDateTime.plusDays(get_day);
+                    i++;
+                }
+            }
+
+
+            getActivity().runOnUiThread(() -> {
+                recyclerView.removeAllViews();
+                recyclerView.setAdapter(new WeatherDetailedAdapter(detailedList));
+            });
+
+        }).start();
     }
 
     public List<WeatherLayout> getFewdayLayout() {
         return fewday_Layout;
     }
 
-    public void setFewdayLayout() {
-        recyclerView.setAdapter(new WeatherFewDayAdapter(fewday_Layout));
+    /**
+     * 数日天気のレイアウトを設定する関数
+     * @param get_day 何日おきに取得するか
+     */
+    public void setFewdayLayout(int get_day) {
+        List<WeatherLayout> fewDayList = new ArrayList<>();
+        for (int n = 0; n < 5; n+=get_day) {
+            WeatherLayout weatherLayout = new WeatherLayout(
+                    LocalDateTime.now(),
+                    WeatherType.UNKNOWN,
+                    0.0f,
+                    0.0f
+            );
+            fewDayList.add(weatherLayout);
+        }
+
+        new Thread(() -> { //ネットワークはメインスレッドできないので、別スレッドにする
+            LocalDateTime localDateTime = LocalDateTime.now(ZoneId.systemDefault()); //現在時刻
+            OpenWeatherAPI openWeatherAPI = OpenWeatherAPI.getInstance(getActivity(), address.getLatitude(), address.getLongitude()); //APIから取得
+
+            int i = 0;
+            for (OpenWeatherAPI.WeatherList weatherList : openWeatherAPI.getWeatherList()) {
+                if (i == 5) {
+                    break;
+                }
+
+                List<OpenWeatherAPI.WeatherList.Weather> weather = weatherList.getWeather();
+                OpenWeatherAPI.WeatherList.Weather first_weather = weather.get(0);
+                OpenWeatherAPI.WeatherList.Main main = weatherList.getMain();
+                LocalDateTime api_weather_time = weatherList.getLocalDateTime();
+
+                WeatherLayout weatherLayout = fewDayList.get(i);
+
+                if (api_weather_time.getDayOfMonth() == localDateTime.getDayOfMonth()) {
+                    weatherLayout.setTime(api_weather_time);
+                    weatherLayout.setWeatherIconID(WeatherType.getConvertType(first_weather.getDescription()).getIconID());
+                    weatherLayout.setTempMax((float) main.getTempMax(false));
+                    weatherLayout.setTempMin((float) main.getTempMin(false));
+                    localDateTime = localDateTime.plusDays(get_day);
+                    i++;
+                }
+
+            }
+
+            getActivity().runOnUiThread(() -> {
+                recyclerView.removeAllViews();
+                recyclerView.setLayoutManager(new LinearLayoutManager(root_view.getContext(), LinearLayoutManager.HORIZONTAL, false));
+                recyclerView.setAdapter(new WeatherFewDayAdapter(fewDayList));
+            });
+
+        }).start();
     }
 
 }
