@@ -1,6 +1,8 @@
 package android.disaster_safety_application.activity;
 
 import android.disaster_safety_application.adapter.WeatherPagerAdapter;
+import android.disaster_safety_application.manager.JsonConfig;
+import android.disaster_safety_application.manager.JsonManager;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -15,6 +17,9 @@ import android.disaster_safety_application.R;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 public class WeatherHomeActivity extends AppCompatActivity {
 
@@ -37,13 +42,20 @@ public class WeatherHomeActivity extends AppCompatActivity {
 
         WeatherPagerAdapter adapter = new WeatherPagerAdapter(this);
         viewPager.setAdapter(adapter);
+        JsonConfig config = (JsonConfig) new JsonManager(WeatherHomeActivity.this, JsonManager.FileType.CONFIG).getDeserializedInstance();
+        Map<String, JsonConfig.WeatherLocation> weatherLocationMap = config.getWeatherLocationMap();
+        ArrayList<String> area_list = new ArrayList<>(weatherLocationMap.keySet());
 
         new TabLayoutMediator(tabLayout, viewPager,
                 new TabLayoutMediator.TabConfigurationStrategy() {
                     @Override
                     public void onConfigureTab(@NonNull TabLayout.Tab tab, int position) {
-                        String[] pages = {"北海道", "沖縄", "鹿児島"};
-                        tab.setText(pages[position]);
+                        if (position == 0) {
+                            tab.setText("現在位置\n");
+                        }
+                        else {
+                            tab.setText(area_list.get(position - 1)); //「現在位置のタブ」分を飛ばすため、マイナス1する
+                        }
                     }
                 }).attach();
     }
