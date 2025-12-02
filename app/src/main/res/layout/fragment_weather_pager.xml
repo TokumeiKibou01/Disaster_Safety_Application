@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.WeatherPagerFragment">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#DBD3D3">
+
+        <LinearLayout
+            android:id="@+id/frame_weather_linear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:text="@string/hello_blank_fragment" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp"
+                android:visibility="visible"
+                app:cardCornerRadius="20dp">
+
+                <LinearLayout
+                    android:id="@+id/weather_date_linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.button.MaterialButtonToggleGroup
+                        android:id="@+id/weather_date_button_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="15dp"
+                        android:gravity="bottom"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/fewhour_button"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="数時間ごと"
+                            android:textColor="#353232"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:backgroundTint="#C8C5C5"
+                            app:cornerRadius="0dp"
+                            app:iconGravity="textTop"
+                            app:iconPadding="4dp"
+                            app:iconSize="15dp"
+                            app:iconTint="#383636"
+                            app:rippleColor="#B4B3B3" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/weatherDetailed_button"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="詳細天気"
+                            android:textColor="#353232"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:backgroundTint="#C8C5C5"
+                            app:cornerRadius="0dp"
+                            app:iconGravity="textTop"
+                            app:iconPadding="4dp"
+                            app:iconSize="15dp"
+                            app:iconTint="#383636"
+                            app:rippleColor="#B4B3B3" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/fewday_button"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="数日間ごと"
+                            android:textColor="#353232"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            app:backgroundTint="#C8C5C5"
+                            app:cornerRadius="0dp"
+                            app:iconGravity="textTop"
+                            app:iconPadding="4dp"
+                            app:iconSize="15dp"
+                            app:iconTint="#383636"
+                            app:rippleColor="#B4B3B3" />
+
+                    </com.google.android.material.button.MaterialButtonToggleGroup>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>
