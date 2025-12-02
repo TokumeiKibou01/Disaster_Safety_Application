@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fewday_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="4dp"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/fewday_datetext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="xx日\n(月)"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/fewday_weatherIcon"
+        android:layout_width="38dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="4dp"
+        app:srcCompat="@drawable/mark_tenki_hare" />
+
+    <TextView
+        android:id="@+id/fewday_maxTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="xx℃"
+        android:textColor="#E43232" />
+
+    <TextView
+        android:id="@+id/fewday_minTemp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="xx℃"
+        android:textColor="#3F51B5" />
+</LinearLayout>
