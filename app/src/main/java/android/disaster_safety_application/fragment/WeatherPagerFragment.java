@@ -14,12 +14,12 @@ import android.widget.TextView;
 
 public class WeatherPagerFragment extends Fragment {
 
-    private String text;
+    private String area;
 
     public WeatherPagerFragment() {}
 
-    public WeatherPagerFragment(String text) {
-        this.text = text;
+    public WeatherPagerFragment(String area) {
+        this.area = area;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class WeatherPagerFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         TextView test_text = view.findViewById(R.id.text);
-        test_text.setText(text);
+        test_text.setText(area);
     }
 
     @Override
