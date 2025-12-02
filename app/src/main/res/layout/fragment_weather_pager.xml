@@ -37,6 +37,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/weather_recyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
                     <com.google.android.material.button.MaterialButtonToggleGroup
                         android:id="@+id/weather_date_button_group"
                         android:layout_width="match_parent"

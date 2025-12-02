@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/weatherDetailed_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/weatherDetailed_dateText"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:textStyle="bold"
+        android:text="xx日（金）"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/weatherDetailed_weatherIcon"
+        android:layout_width="match_parent"
+        android:layout_height="33dp"
+        android:layout_marginTop="4dp"
+        app:srcCompat="@drawable/mark_tenki_hare" />
+
+    <TextView
+        android:id="@+id/weatherDetailed_weatherText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="晴れのち曇り"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/weatherDetailed_maxTemp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="xx℃"
+            android:textColor="#E43232"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/weatherDetailed_minTemp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="xx℃"
+            android:textColor="#3F51B5"
+            android:textSize="16sp" />
+    </LinearLayout>
+</LinearLayout>
