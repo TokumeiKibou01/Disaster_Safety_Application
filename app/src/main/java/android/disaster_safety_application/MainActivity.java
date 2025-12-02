@@ -3,6 +3,7 @@ package android.disaster_safety_application;
 import android.content.Intent;
 import android.disaster_safety_application.activity.WeatherHomeActivity;
 import android.disaster_safety_application.adapter.WeatherPagerAdapter;
+import android.disaster_safety_application.manager.JsonManager;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -15,6 +16,8 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,7 +32,13 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+        initLibrary();
+
         Intent intent = new Intent(this, WeatherHomeActivity.class);
         startActivity(intent);
+    }
+
+    private void initLibrary() {
+        Arrays.stream(JsonManager.FileType.values()).forEach(type -> new JsonManager(this, type).createJson());
     }
 }
