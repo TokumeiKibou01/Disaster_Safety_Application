@@ -35,7 +35,7 @@ public class OpenWeatherAPI {
 
     public static OpenWeatherAPI getInstance(Activity activity, double lat, double lon) {
         try {
-            SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences sharedPref = activity.getSharedPreferences("Main", Context.MODE_PRIVATE);
             String apiKey = sharedPref.getString("openweather_apikey", null);
 
             URL url = new URL("https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=" + apiKey + "&lang=ja");
