@@ -2,6 +2,9 @@
 
 ## 概要
 * Android用の防災情報アプリです。
+### 操作画面
+<img width="1080" height="2520" alt="Screenshot_20251203_230208" src="https://github.com/user-attachments/assets/04306d09-6eae-4455-bfb9-a69145145813" />
+
 
 ## その他
 ### 使用API
