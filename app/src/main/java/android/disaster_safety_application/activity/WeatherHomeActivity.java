@@ -1,6 +1,7 @@
 package android.disaster_safety_application.activity;
 
 import android.disaster_safety_application.adapter.WeatherPagerAdapter;
+import android.disaster_safety_application.listener.WeatherHomeActivityListener;
 import android.disaster_safety_application.manager.JsonConfig;
 import android.disaster_safety_application.manager.JsonManager;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import android.disaster_safety_application.R;
 
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -39,6 +41,8 @@ public class WeatherHomeActivity extends AppCompatActivity {
     private void initActivity() {
         ViewPager2 viewPager = findViewById(R.id.weather_viewPager);
         TabLayout tabLayout = findViewById(R.id.weather_location_tabLayout);
+        MaterialButtonToggleGroup materialButtonToggleGroup = findViewById(R.id.home_bottom_button_group);
+        materialButtonToggleGroup.addOnButtonCheckedListener(new WeatherHomeActivityListener());
 
         WeatherPagerAdapter adapter = new WeatherPagerAdapter(this);
         viewPager.setAdapter(adapter);
