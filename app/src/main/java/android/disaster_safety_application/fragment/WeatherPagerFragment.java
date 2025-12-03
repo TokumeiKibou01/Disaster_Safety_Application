@@ -136,7 +136,7 @@ public class WeatherPagerFragment extends Fragment {
 
         new Thread(() -> { //ネットワークはメインスレッドできないので、別スレッドにする
             LocalDateTime localDateTime = LocalDateTime.now(ZoneId.systemDefault()); //現在時刻
-            OpenWeatherAPI openWeatherAPI = OpenWeatherAPI.getInstance(getActivity(), address.getLatitude(), address.getLongitude()); //APIから取得
+            OpenWeatherAPI openWeatherAPI = OpenWeatherAPI.getInstance(requireActivity(), address.getLatitude(), address.getLongitude()); //APIから取得
 
             int i = 0;
             for (OpenWeatherAPI.WeatherList weatherList : openWeatherAPI.getWeatherList()) {
@@ -199,7 +199,7 @@ public class WeatherPagerFragment extends Fragment {
 
         new Thread(() -> { //ネットワークはメインスレッドできないので、別スレッドにする
             LocalDateTime localDateTime = LocalDateTime.now(ZoneId.systemDefault()); //現在時刻
-            OpenWeatherAPI openWeatherAPI = OpenWeatherAPI.getInstance(getActivity(), address.getLatitude(), address.getLongitude()); //APIから取得
+            OpenWeatherAPI openWeatherAPI = OpenWeatherAPI.getInstance(requireActivity(), address.getLatitude(), address.getLongitude()); //APIから取得
 
             int i = 0;
             for (OpenWeatherAPI.WeatherList weatherList : openWeatherAPI.getWeatherList()) {
@@ -262,7 +262,7 @@ public class WeatherPagerFragment extends Fragment {
 
         new Thread(() -> { //ネットワークはメインスレッドできないので、別スレッドにする
             LocalDateTime localDateTime = LocalDateTime.now(ZoneId.systemDefault()); //現在時刻
-            OpenWeatherAPI openWeatherAPI = OpenWeatherAPI.getInstance(getActivity(), address.getLatitude(), address.getLongitude()); //APIから取得
+            OpenWeatherAPI openWeatherAPI = OpenWeatherAPI.getInstance(requireActivity(), address.getLatitude(), address.getLongitude()); //APIから取得
 
             int i = 0;
             for (OpenWeatherAPI.WeatherList weatherList : openWeatherAPI.getWeatherList()) {
