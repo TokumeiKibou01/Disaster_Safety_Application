@@ -10,17 +10,14 @@ import android.disaster_safety_application.status.AppColor;
 import android.disaster_safety_application.status.WeatherType;
 import android.location.Address;
 import android.location.Geocoder;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,9 +40,9 @@ public class WeatherPagerFragment extends Fragment {
     private Address address;
     private View root_view;
 
-    private final List<WeatherLayout> fewhour_Layout = new ArrayList<>();
-    private final List<WeatherLayout> detailed_Layout = new ArrayList<>();
-    private final List<WeatherLayout> fewday_Layout = new ArrayList<>();
+    private final List<WeatherLayout> fewhour_LayoutList = new ArrayList<>();
+    private final List<WeatherLayout> detailed_LayoutList = new ArrayList<>();
+    private final List<WeatherLayout> fewday_LayoutList = new ArrayList<>();
     private RecyclerView recyclerView;
 
     public WeatherPagerFragment() {}
@@ -96,22 +93,16 @@ public class WeatherPagerFragment extends Fragment {
         buttonGroup.addOnButtonCheckedListener(new WeatherPagerFragmentListener(this)); //リスナーに登録
 
         //リスト
-        fewday_Layout.clear();
-        fewhour_Layout.clear();
-        detailed_Layout.clear();
-
-        //TODO 後で消す
-        //テストデータ
-        fewhour_Layout.add(new WeatherLayout(LocalDateTime.now(), WeatherType.SUNNY, 30f, 10f));
-        fewday_Layout.add(new WeatherLayout(LocalDateTime.now(), WeatherType.MOON, 20f, 10f));
-        detailed_Layout.add(new WeatherLayout(LocalDateTime.now(),  WeatherType.SNOW.getIconID(), "雪", 15f, 10f));
+        fewday_LayoutList.clear();
+        fewhour_LayoutList.clear();
+        detailed_LayoutList.clear();
 
         //リストのビュー
         recyclerView = root_view.findViewById(R.id.weather_recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(root_view.getContext(), LinearLayoutManager.HORIZONTAL, false));
 
         //初期設定
-        setFewhourLayout(3);
+        setFewhourLayout(3, true);
     }
 
     public Address getAddress() {
@@ -119,15 +110,20 @@ public class WeatherPagerFragment extends Fragment {
     }
 
     public List<WeatherLayout> getFewhourLayout() {
-        return fewhour_Layout;
+        return fewhour_LayoutList;
     }
 
     /**
      * 数時間天気のレイアウトを設定する関数
      * @param get_hour 何時間おきに取得するか
      */
-    public void setFewhourLayout(int get_hour) {
-        List<WeatherLayout> fewHourList = new ArrayList<>();
+    public void setFewhourLayout(int get_hour, boolean update) {
+        if (!update && !fewhour_LayoutList.isEmpty()) {
+            recyclerView.removeAllViews();
+            recyclerView.setAdapter(new WeatherFewHourAdapter(fewhour_LayoutList));
+            return;
+        }
+
         for (int n = 0; n < 24; n+=get_hour) { //24時間先まで追加
             WeatherLayout weatherLayout = new WeatherLayout(
                     LocalDateTime.now(),
@@ -135,7 +131,7 @@ public class WeatherPagerFragment extends Fragment {
                     0.0f,
                     0.0f
             );
-            fewHourList.add(weatherLayout);
+            fewhour_LayoutList.add(weatherLayout);
         }
 
         new Thread(() -> { //ネットワークはメインスレッドできないので、別スレッドにする
@@ -156,7 +152,7 @@ public class WeatherPagerFragment extends Fragment {
                         break;
                     }
 
-                    WeatherLayout weatherLayout = fewHourList.get(i);
+                    WeatherLayout weatherLayout = fewhour_LayoutList.get(i);
                     weatherLayout.setTime(api_weather_time);
                     weatherLayout.setWeatherIconID(WeatherType.getConvertType(first_weather.getDescription()).getIconID());
                     weatherLayout.setTempMax((float) main.getTempMax(false));
@@ -168,24 +164,28 @@ public class WeatherPagerFragment extends Fragment {
 
 
             getActivity().runOnUiThread(() -> {
-                RecyclerView weatherView = root_view.findViewById(R.id.weather_recyclerView);
-                weatherView.removeAllViews();
-                weatherView.setAdapter(new WeatherFewHourAdapter(fewHourList));
+                recyclerView.removeAllViews();
+                recyclerView.setAdapter(new WeatherFewHourAdapter(fewhour_LayoutList));
             });
 
         }).start();
     }
 
     public List<WeatherLayout> getDetailedLayout() {
-        return detailed_Layout;
+        return detailed_LayoutList;
     }
 
     /**
      * 詳細天気のレイアウトを設定する関数
      * @param get_day 何日おきに取得するか
      */
-    public void setDetailedLayout(int get_day) {
-        List<WeatherLayout> detailedList = new ArrayList<>();
+    public void setDetailedLayout(int get_day, boolean update) {
+        if (!update && !detailed_LayoutList.isEmpty()) {
+            recyclerView.removeAllViews();
+            recyclerView.setAdapter(new WeatherDetailedAdapter(detailed_LayoutList));
+            return;
+        }
+
         for (int n = 0; n < 5; n+=get_day) {
             WeatherLayout weatherLayout = new WeatherLayout(
                     LocalDateTime.now(),
@@ -194,7 +194,7 @@ public class WeatherPagerFragment extends Fragment {
                     0.0f,
                     0.0f
             );
-            detailedList.add(weatherLayout);
+            detailed_LayoutList.add(weatherLayout);
         }
 
         new Thread(() -> { //ネットワークはメインスレッドできないので、別スレッドにする
@@ -212,7 +212,7 @@ public class WeatherPagerFragment extends Fragment {
                 OpenWeatherAPI.WeatherList.Main main = weatherList.getMain();
                 LocalDateTime api_weather_time = weatherList.getLocalDateTime();
 
-                WeatherLayout weatherLayout = detailedList.get(i);
+                WeatherLayout weatherLayout = detailed_LayoutList.get(i);
 
                 if (api_weather_time.getDayOfMonth() == localDateTime.getDayOfMonth()) {
                     weatherLayout.setTime(api_weather_time);
@@ -229,22 +229,27 @@ public class WeatherPagerFragment extends Fragment {
 
             getActivity().runOnUiThread(() -> {
                 recyclerView.removeAllViews();
-                recyclerView.setAdapter(new WeatherDetailedAdapter(detailedList));
+                recyclerView.setAdapter(new WeatherDetailedAdapter(detailed_LayoutList));
             });
 
         }).start();
     }
 
     public List<WeatherLayout> getFewdayLayout() {
-        return fewday_Layout;
+        return fewday_LayoutList;
     }
 
     /**
      * 数日天気のレイアウトを設定する関数
      * @param get_day 何日おきに取得するか
      */
-    public void setFewdayLayout(int get_day) {
-        List<WeatherLayout> fewDayList = new ArrayList<>();
+    public void setFewdayLayout(int get_day, boolean update) {
+        if (!update && !fewday_LayoutList.isEmpty()) {
+            recyclerView.removeAllViews();
+            recyclerView.setAdapter(new WeatherFewDayAdapter(fewday_LayoutList));
+            return;
+        }
+
         for (int n = 0; n < 5; n+=get_day) {
             WeatherLayout weatherLayout = new WeatherLayout(
                     LocalDateTime.now(),
@@ -252,7 +257,7 @@ public class WeatherPagerFragment extends Fragment {
                     0.0f,
                     0.0f
             );
-            fewDayList.add(weatherLayout);
+            fewday_LayoutList.add(weatherLayout);
         }
 
         new Thread(() -> { //ネットワークはメインスレッドできないので、別スレッドにする
@@ -270,7 +275,7 @@ public class WeatherPagerFragment extends Fragment {
                 OpenWeatherAPI.WeatherList.Main main = weatherList.getMain();
                 LocalDateTime api_weather_time = weatherList.getLocalDateTime();
 
-                WeatherLayout weatherLayout = fewDayList.get(i);
+                WeatherLayout weatherLayout = fewday_LayoutList.get(i);
 
                 if (api_weather_time.getDayOfMonth() == localDateTime.getDayOfMonth()) {
                     weatherLayout.setTime(api_weather_time);
@@ -285,8 +290,7 @@ public class WeatherPagerFragment extends Fragment {
 
             getActivity().runOnUiThread(() -> {
                 recyclerView.removeAllViews();
-                recyclerView.setLayoutManager(new LinearLayoutManager(root_view.getContext(), LinearLayoutManager.HORIZONTAL, false));
-                recyclerView.setAdapter(new WeatherFewDayAdapter(fewDayList));
+                recyclerView.setAdapter(new WeatherFewDayAdapter(fewday_LayoutList));
             });
 
         }).start();

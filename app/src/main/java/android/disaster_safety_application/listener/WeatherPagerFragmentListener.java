@@ -28,13 +28,13 @@ public class WeatherPagerFragmentListener implements MaterialButtonToggleGroup.O
             group.findViewById(checkedId).setBackgroundColor(AppColor.CHECK_COLOR.getColorInteger());
 
             if (checkedId == R.id.fewhour_button) {
-                fragment.setFewhourLayout(3);
+                fragment.setFewhourLayout(3, false);
             }
             else if (checkedId == R.id.weatherDetailed_button) {
-                fragment.setDetailedLayout(1);
+                fragment.setDetailedLayout(1, false);
             }
             else if (checkedId == R.id.fewday_button) {
-                fragment.setFewdayLayout(1);
+                fragment.setFewdayLayout(1, false);
             }
         }
     }

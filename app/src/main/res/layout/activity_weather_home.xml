@@ -31,10 +31,57 @@
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/weather_viewPager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/home_bottom_button_group"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/weather_location_tabLayout" />
+
+    <com.google.android.material.button.MaterialButtonToggleGroup
+        android:id="@+id/home_bottom_button_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/menu_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="メニュー"
+            android:textColor="#353232"
+            android:textSize="12sp"
+            app:backgroundTint="#FFFFFF"
+            app:cornerRadius="0dp"
+            app:iconGravity="textTop"
+            app:iconPadding="4dp"
+            app:iconSize="15dp"
+            app:iconTint="#383636"
+            app:rippleColor="#B4B3B3"
+            tools:layout_editor_absoluteX="160dp"
+            tools:layout_editor_absoluteY="266dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/search_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="検索"
+            android:textColor="#353232"
+            android:textSize="12sp"
+            app:backgroundTint="#FFFFFF"
+            app:cornerRadius="0dp"
+            app:iconGravity="textTop"
+            app:iconPadding="4dp"
+            app:iconSize="15dp"
+            app:iconTint="#353232"
+            tools:layout_editor_absoluteX="160dp"
+            tools:layout_editor_absoluteY="266dp" />
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
