@@ -33,6 +33,11 @@ public class JsonManager {
         this.activity = activity;
         this.type = type;
         this.gson = new GsonBuilder().setPrettyPrinting().create();
+        try {
+            this.raw_element = getFileRawElement();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -72,10 +77,6 @@ public class JsonManager {
             if (!getFile().exists()) createJson(); //無い場合は作成
             if (raw_element == null) {
                 raw_element = getFileRawElement();
-            }
-            else {
-                JsonElement file_json = getFileRawElement(); //ファイルから直接
-                raw_element = file_json;
             }
             memory_json_map.put(type, this);
 
