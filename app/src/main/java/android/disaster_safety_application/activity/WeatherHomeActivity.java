@@ -19,11 +19,15 @@ import android.disaster_safety_application.R;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 public class WeatherHomeActivity extends AppCompatActivity {
+
+    private boolean isFirstFlag = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,28 @@ public class WeatherHomeActivity extends AppCompatActivity {
             return insets;
         });
         initActivity();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isFirstFlag) {
+            JsonManager json = new JsonManager(this, JsonManager.FileType.CONFIG);
+            JsonObject root_obj = json.getRawElement().getAsJsonObject();
+            JsonObject loc_obj = root_obj.getAsJsonObject("weather_location");
+            TabLayout tabLayout = findViewById(R.id.weather_location_tabLayout);
+            for (int n = tabLayout.getTabCount() - 1; n >= 1; n--) {
+                tabLayout.removeTabAt(n);
+            }
+            for (Map.Entry<String, JsonElement> entry : loc_obj.entrySet()) {
+                String key = entry.getKey();
+                //JsonObject value = entry.getValue().getAsJsonObject();
+                TabLayout.Tab newTab = tabLayout.newTab();
+                newTab.setText(key);
+                tabLayout.addTab(newTab);
+            }
+        }
+        isFirstFlag = false;
     }
 
     private void initActivity() {

@@ -11,6 +11,7 @@ import android.disaster_safety_application.api.OpenWeatherAPI;
 import android.disaster_safety_application.manager.JsonManager;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.widget.EditText;
 
 import androidx.activity.EdgeToEdge;
@@ -23,8 +24,11 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
 import java.util.Arrays;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
