@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.WeatherSearchActivity">
+
+    <LinearLayout
+        android:id="@+id/weather_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/weather_search_backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="20dp"
+            android:background="#00FFFFFF"
+            app:srcCompat="@drawable/baseline_arrow_back_24"
+            tools:layout_editor_absoluteX="16dp"
+            tools:layout_editor_absoluteY="10dp" />
+
+        <EditText
+            android:id="@+id/weather_search_editText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginVertical="10dp"
+            android:layout_marginRight="10dp"
+            android:background="@color/white"
+            android:ems="10"
+            android:hint="ここに入力"
+            android:inputType="text"
+            android:text="" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/weather_search_resultText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#EBE4E4"
+        android:text="検索結果"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weather_search_bar" />
+
+    <LinearLayout
+        android:id="@+id/weather_search_resultLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weather_search_resultText">
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
