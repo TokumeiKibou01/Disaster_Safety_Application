@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.pm.PackageManager;
 import android.disaster_safety_application.adapter.WeatherPagerAdapter;
+import android.disaster_safety_application.fragment.WeatherPagerFragment;
 import android.disaster_safety_application.listener.WeatherHomeActivityListener;
 import android.disaster_safety_application.manager.JsonConfig;
 import android.disaster_safety_application.manager.JsonManager;
@@ -20,6 +21,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.disaster_safety_application.R;
@@ -152,6 +154,12 @@ public class WeatherHomeActivity extends AppCompatActivity {
                     }
                     else {
                         now_location_tab.setText("現在位置\n" + address[0].getAdminArea());
+                        ViewPager2 viewPager = findViewById(R.id.weather_viewPager);
+                        WeatherPagerFragment fragment = WeatherPagerAdapter.nowFragment;
+                        fragment.setArea("現在位置\n" + address[0].getAdminArea());
+                        if (fragment != null) {
+                            fragment.initActivity();
+                        }
                     }
                 });
             }

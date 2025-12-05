@@ -14,6 +14,8 @@ import java.util.Map;
 
 public class WeatherPagerAdapter extends FragmentStateAdapter {
 
+    public static WeatherPagerFragment nowFragment;
+
     private final Map<String, JsonConfig.WeatherLocation> weatherLocationMap;
 
     public WeatherPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
