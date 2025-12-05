@@ -1,5 +1,6 @@
 package android.disaster_safety_application.fragment;
 
+import android.disaster_safety_application.adapter.WeatherPagerAdapter;
 import android.disaster_safety_application.api.OpenWeatherAPI;
 import android.disaster_safety_application.layout.WeatherDetailedAdapter;
 import android.disaster_safety_application.layout.WeatherFewDayAdapter;
@@ -68,21 +69,29 @@ public class WeatherPagerFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_weather_pager, container, false);
     }
 
-    private void initActivity() {
+    public void initActivity() {
         TextView test_text = root_view.findViewById(R.id.text);
-        test_text.setText(area);
+
+        if (area.contains("現在位置")) {
+            WeatherPagerAdapter.nowFragment = this;
+        }
 
         Geocoder geocoder = new Geocoder(getActivity());
-        if (!area.contains("現在位置")) {
-            try {
-                address = geocoder.getFromLocationName(area, 10).get(0);
-            } catch (IOException e) {}
-        }
+        try {
+            area = area.replace("現在位置", "");
+            List<Address> addressList = geocoder.getFromLocationName(area, 10);
+            if (!addressList.isEmpty()) {
+                address = addressList.get(0);
+            }
+        } catch (IOException e) {}
 
         if (address == null) {
             address = new Address(Locale.JAPAN);
             address.setLongitude(139.45f);
             address.setLatitude(35.41f);
+        }
+        else {
+            test_text.setText(area);
         }
 
         //ボタングループ
@@ -103,6 +112,14 @@ public class WeatherPagerFragment extends Fragment {
 
         //初期設定
         setFewhourLayout(3, true);
+    }
+
+    public void setArea(String name) {
+        this.area = name;
+    }
+
+    public String getArea() {
+        return area;
     }
 
     public Address getAddress() {
